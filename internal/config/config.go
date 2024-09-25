@@ -13,12 +13,12 @@ type Config struct {
 }
 
 func Read() (Config, error) {
-	path, err := os.UserHomeDir()
+	path, err := getPath()
 	if err != nil {
-		return Config{}, fmt.Errorf("home not found")
+		return Config{}, fmt.Errorf("unable to get config path")
 	}
 
-	data, err := os.ReadFile(path + "/.gatorconfig.json")
+	data, err := os.ReadFile(path)
 	if err != nil {
 		return Config{}, fmt.Errorf("file not loaded")
 	}
@@ -30,4 +30,34 @@ func Read() (Config, error) {
 	}
 
 	return config, nil
+}
+
+func (cfg *Config) SetUser(name string) error {
+	path, err := getPath()
+	if err != nil {
+		return fmt.Errorf("unable to get config path")
+	}
+
+	cfg.CurrentUserName = name
+
+	data, err := json.Marshal(cfg)
+	if err != nil {
+		log.Printf("Error marshalling config: %s", err)
+		return err
+	}
+
+	err = os.WriteFile(path, data, 0666)
+	if err != nil {
+		log.Printf("Error writing file: %s", err)
+		return err
+	}
+	return nil
+}
+
+func getPath() (string, error) {
+	path, err := os.UserHomeDir()
+	if err != nil {
+		return "", fmt.Errorf("home not found")
+	}
+	return path + "/.gatorconfig.json", nil
 }

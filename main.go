@@ -12,5 +12,15 @@ func main() {
 		log.Fatal("Can't load config")
 	}
 
-	fmt.Printf(appConfig.DbURL)
+	err = appConfig.SetUser("kevin")
+	if err != nil {
+		log.Fatal("Can't set user")
+	}
+
+	appConfig, err = config.Read()
+	if err != nil {
+		log.Fatal("Can't load config")
+	}
+
+	fmt.Printf("config:\n db: %s user: %s\n", appConfig.DbURL, appConfig.CurrentUserName)
 }
