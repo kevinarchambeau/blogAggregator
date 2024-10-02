@@ -17,10 +17,6 @@ func main() {
 		log.Fatal("No arguments provided")
 	}
 
-	if args[0] == "login" && len(args) != 2 {
-		log.Fatal("No username provided")
-	}
-
 	appState := state{}
 	appConfig, err := config.Read()
 	if err != nil {
@@ -35,7 +31,7 @@ func main() {
 
 	cliCmd := command{}
 	cliCmd.name = args[0]
-	cliCmd.args = []string{args[1]}
+	cliCmd.args = args[1:]
 
 	err = cmnds.run(&appState, cliCmd)
 	if err != nil {
