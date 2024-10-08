@@ -1,15 +1,18 @@
 package main
 
-import _ "github.com/lib/pq"
 import (
+	"database/sql"
 	"fmt"
 	"github.com/kevinarchambeau/blogAggregator/internal/config"
+	"github.com/kevinarchambeau/blogAggregator/internal/database"
+	_ "github.com/lib/pq"
 	"log"
 	"os"
 )
 
 type state struct {
 	cfg *config.Config
+	db  *database.Queries
 }
 
 func main() {
@@ -24,11 +27,16 @@ func main() {
 		log.Fatal("Can't load config")
 	}
 	appState.cfg = &appConfig
+	dbURL := appState.cfg.DbURL
+	db, err := sql.Open("postgres", dbURL)
+	dbQueries := database.New(db)
+	appState.db = dbQueries
 
 	cmnds := commands{
 		cmds: map[string]func(*state, command) error{},
 	}
 	cmnds.register("login", handlerLogin)
+	cmnds.register("register", handlerRegister)
 
 	cliCmd := command{}
 	cliCmd.name = args[0]
