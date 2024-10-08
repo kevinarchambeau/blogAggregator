@@ -37,6 +37,7 @@ func main() {
 	}
 	cmnds.register("login", handlerLogin)
 	cmnds.register("register", handlerRegister)
+	cmnds.register("reset", handlerReset)
 
 	cliCmd := command{}
 	cliCmd.name = args[0]
