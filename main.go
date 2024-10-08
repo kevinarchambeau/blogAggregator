@@ -45,7 +45,8 @@ func main() {
 	err = cmnds.run(&appState, cliCmd)
 	if err != nil {
 		log.Printf("error running command '%s': %s\n", cliCmd.name, err)
+		log.Fatal("exiting")
 	}
 
-	fmt.Printf("config:\n db: %s\n user: %s\n", appConfig.DbURL, appConfig.CurrentUserName)
+	fmt.Printf("app config:\n db: %s\n user: %s\n", appConfig.DbURL, appConfig.CurrentUserName)
 }

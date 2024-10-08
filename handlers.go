@@ -12,7 +12,12 @@ func handlerLogin(s *state, cmd command) error {
 	if len(cmd.args) == 0 {
 		return fmt.Errorf("no user provided, can't login")
 	}
-	err := s.cfg.SetUser(cmd.args[0])
+	_, err := s.db.GetUser(context.Background(), cmd.args[0])
+	if err != nil {
+		return err
+	}
+
+	err = s.cfg.SetUser(cmd.args[0])
 	if err != nil {
 		return err
 	}
@@ -34,7 +39,13 @@ func handlerRegister(s *state, cmd command) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("User created: %s\n", result)
+	err = s.cfg.SetUser(result.Name)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("User '%s' created and set as current\n", result.Name)
+	fmt.Printf("Record is: %s\n", result)
 
 	return nil
 }
