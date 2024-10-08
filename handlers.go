@@ -55,6 +55,7 @@ func handlerReset(s *state, cmd command) error {
 	if err != nil {
 		return err
 	}
-
+	
+	fmt.Printf("Users table truncated\n")
 	return nil
 }
