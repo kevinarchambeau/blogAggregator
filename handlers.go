@@ -55,7 +55,24 @@ func handlerReset(s *state, cmd command) error {
 	if err != nil {
 		return err
 	}
-	
+
 	fmt.Printf("Users table truncated\n")
+	return nil
+}
+
+func handlerGetUsers(s *state, cmd command) error {
+	results, err := s.db.GetUsers(context.Background())
+	if err != nil {
+		return err
+	}
+	fmt.Printf("User list: \n")
+	for _, record := range results {
+		if record.Name == s.cfg.CurrentUserName {
+			fmt.Printf("* %s (current)\n", record.Name)
+		} else {
+			fmt.Printf("* %s\n", record.Name)
+		}
+	}
+	fmt.Printf("\n")
 	return nil
 }
