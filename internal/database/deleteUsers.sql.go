@@ -10,7 +10,7 @@ import (
 )
 
 const truncateUsers = `-- name: TruncateUsers :exec
-TRUNCATE users
+TRUNCATE users CASCADE
 `
 
 func (q *Queries) TruncateUsers(ctx context.Context) error {

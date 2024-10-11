@@ -1,2 +1,2 @@
 -- name: TruncateUsers :exec
-TRUNCATE users;
+TRUNCATE users CASCADE;
