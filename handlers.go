@@ -36,9 +36,7 @@ func handlerRegister(s *state, cmd command) error {
 		UpdatedAt: currentTime,
 		Name:      cmd.args[0],
 	})
-	if err != nil {
-		return err
-	}
+
 	err = s.cfg.SetUser(result.Name)
 	if err != nil {
 		return err
@@ -87,6 +85,32 @@ func handlerAgg(s *state, cmd command) error {
 		return err
 	}
 	fmt.Printf("RSS struct: %s\n", data)
+
+	return nil
+}
+
+func handlerAddFeed(s *state, cmd command) error {
+	if len(cmd.args) < 2 {
+		return fmt.Errorf("not enough args. usage: addfeed $name $url")
+	}
+	user, err := s.db.GetUser(context.Background(), s.cfg.CurrentUserName)
+	if err != nil {
+		return err
+	}
+
+	currentTime := time.Now()
+	result, err := s.db.CreateFeed(context.Background(), database.CreateFeedParams{
+		ID:        uuid.New(),
+		CreatedAt: currentTime,
+		UpdatedAt: currentTime,
+		Name:      cmd.args[0],
+		Url:       cmd.args[1],
+		UserID:    user.ID,
+	})
+	if err != nil {
+		return err
+	}
+	fmt.Printf("Feed added: %s\n", result)
 
 	return nil
 }
