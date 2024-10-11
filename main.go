@@ -40,6 +40,7 @@ func main() {
 	cmnds.register("users", handlerGetUsers)
 	cmnds.register("agg", handlerAgg)
 	cmnds.register("addfeed", handlerAddFeed)
+	cmnds.register("feeds", handlerGetFeeds)
 
 	cliCmd := command{}
 	cliCmd.name = args[0]
