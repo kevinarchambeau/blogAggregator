@@ -76,3 +76,17 @@ func handlerGetUsers(s *state, cmd command) error {
 	fmt.Printf("\n")
 	return nil
 }
+
+func handlerAgg(s *state, cmd command) error {
+	//if len(cmd.args) == 0 {
+	//	return fmt.Errorf("no url provided")
+	//}
+
+	data, err := fetchFeed(context.Background(), "https://www.wagslane.dev/index.xml")
+	if err != nil {
+		return err
+	}
+	fmt.Printf("RSS struct: %s\n", data)
+
+	return nil
+}

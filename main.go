@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 	"github.com/kevinarchambeau/blogAggregator/internal/config"
 	"github.com/kevinarchambeau/blogAggregator/internal/database"
 	_ "github.com/lib/pq"
@@ -39,6 +38,7 @@ func main() {
 	cmnds.register("register", handlerRegister)
 	cmnds.register("reset", handlerReset)
 	cmnds.register("users", handlerGetUsers)
+	cmnds.register("agg", handlerAgg)
 
 	cliCmd := command{}
 	cliCmd.name = args[0]
@@ -50,5 +50,5 @@ func main() {
 		log.Fatal("exiting")
 	}
 
-	fmt.Printf("app config:\n db: %s\n user: %s\n", appConfig.DbURL, appConfig.CurrentUserName)
+	//fmt.Printf("app config:\n db: %s\n user: %s\n", appConfig.DbURL, appConfig.CurrentUserName)
 }
