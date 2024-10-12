@@ -43,6 +43,7 @@ func main() {
 	cmnds.register("feeds", handlerGetFeeds)
 	cmnds.register("follow", middlewareLoggedIn(handlerFollow))
 	cmnds.register("following", middlewareLoggedIn(handlerFollowing))
+	cmnds.register("unfollow", middlewareLoggedIn(handlerUnfollow))
 
 	cliCmd := command{}
 	cliCmd.name = args[0]
