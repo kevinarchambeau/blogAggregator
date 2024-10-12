@@ -112,6 +112,15 @@ func handlerAddFeed(s *state, cmd command) error {
 	}
 	fmt.Printf("Feed added: %s\n", result)
 
+	followCmd := command{
+		name: "follow",
+		args: []string{cmd.args[1]},
+	}
+	err = handlerFollow(s, followCmd)
+	if err != nil {
+		return err
+	}
+	
 	return nil
 }
 
@@ -157,7 +166,26 @@ func handlerFollow(s *state, cmd command) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("Feed name: %s, user name: %s\n", result.FeedName, result.UserName)
+	fmt.Printf("Follow created, Feed name: %s, user name: %s\n", result.FeedName, result.UserName)
+
+	return nil
+}
+
+func handlerFollowing(s *state, cmd command) error {
+	user, err := s.db.GetUser(context.Background(), s.cfg.CurrentUserName)
+	if err != nil {
+		return err
+	}
+
+	results, err := s.db.GetFeedFollowsForUser(context.Background(), user.ID)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("%s is following: \n", s.cfg.CurrentUserName)
+	for _, record := range results {
+		fmt.Printf("* %s\n", record.FeedName)
+	}
 
 	return nil
 }
