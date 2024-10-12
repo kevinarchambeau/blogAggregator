@@ -39,10 +39,10 @@ func main() {
 	cmnds.register("reset", handlerReset)
 	cmnds.register("users", handlerGetUsers)
 	cmnds.register("agg", handlerAgg)
-	cmnds.register("addfeed", handlerAddFeed)
+	cmnds.register("addfeed", middlewareLoggedIn(handlerAddFeed))
 	cmnds.register("feeds", handlerGetFeeds)
-	cmnds.register("follow", handlerFollow)
-	cmnds.register("following", handlerFollowing)
+	cmnds.register("follow", middlewareLoggedIn(handlerFollow))
+	cmnds.register("following", middlewareLoggedIn(handlerFollowing))
 
 	cliCmd := command{}
 	cliCmd.name = args[0]
