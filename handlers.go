@@ -130,3 +130,34 @@ func handlerGetFeeds(s *state, cmd command) error {
 	}
 	return nil
 }
+
+func handlerFollow(s *state, cmd command) error {
+	if len(cmd.args) < 1 {
+		return fmt.Errorf("not enough args. usage: follow $url")
+	}
+
+	user, err := s.db.GetUser(context.Background(), s.cfg.CurrentUserName)
+	if err != nil {
+		return err
+	}
+
+	feed, err := s.db.GetFeedByUrl(context.Background(), cmd.args[0])
+	if err != nil {
+		return err
+	}
+
+	currentTime := time.Now()
+	result, err := s.db.CreateFeedFollow(context.Background(), database.CreateFeedFollowParams{
+		ID:        uuid.New(),
+		CreatedAt: currentTime,
+		UpdatedAt: currentTime,
+		UserID:    user.ID,
+		FeedID:    feed.ID,
+	})
+	if err != nil {
+		return err
+	}
+	fmt.Printf("Feed name: %s, user name: %s\n", result.FeedName, result.UserName)
+
+	return nil
+}
