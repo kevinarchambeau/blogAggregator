@@ -10,7 +10,7 @@ import (
 
 func handlerLogin(s *state, cmd command) error {
 	if len(cmd.args) == 0 {
-		return fmt.Errorf("no user provided, can't login")
+		return fmt.Errorf("no user provided, can't login. usage: login $user")
 	}
 	_, err := s.db.GetUser(context.Background(), cmd.args[0])
 	if err != nil {
@@ -27,7 +27,7 @@ func handlerLogin(s *state, cmd command) error {
 
 func handlerRegister(s *state, cmd command) error {
 	if len(cmd.args) == 0 {
-		return fmt.Errorf("no user provided, can't register")
+		return fmt.Errorf("no user provided, can't register. usage: register $user")
 	}
 	currentTime := time.Now()
 	result, err := s.db.CreateUser(context.Background(), database.CreateUserParams{
@@ -76,17 +76,22 @@ func handlerGetUsers(s *state, cmd command) error {
 }
 
 func handlerAgg(s *state, cmd command) error {
-	//if len(cmd.args) == 0 {
-	//	return fmt.Errorf("no url provided")
-	//}
-
-	data, err := fetchFeed(context.Background(), "https://www.wagslane.dev/index.xml")
+	if len(cmd.args) == 0 {
+		return fmt.Errorf("no time provided, usage: agg $time (e.g. 60s, 1m, 1h)")
+	}
+	duration, err := time.ParseDuration(cmd.args[0])
 	if err != nil {
 		return err
 	}
-	fmt.Printf("RSS struct: %s\n", data)
+	fmt.Printf("Feed collection cycle: %s\n\n", duration)
 
-	return nil
+	ticker := time.NewTicker(duration)
+	for ; ; <-ticker.C {
+		err = scrapeFeeds(s, duration)
+		if err != nil {
+			return err
+		}
+	}
 }
 
 func handlerAddFeed(s *state, cmd command, user database.User) error {
