@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	"github.com/kevinarchambeau/blogAggregator/internal/database"
+	"strconv"
 	"time"
 )
 
@@ -197,6 +198,32 @@ func handlerUnfollow(s *state, cmd command, user database.User) error {
 	})
 	if err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func handlerBrowse(s *state, cmd command, user database.User) error {
+	limit := 2
+	var err error
+
+	if len(cmd.args) == 1 {
+		limit, err = strconv.Atoi(cmd.args[0])
+		if err != nil {
+			return err
+		}
+	}
+	fmt.Printf("%d\n.", limit)
+
+	results, err := s.db.GetPostsForUsers(context.Background(), database.GetPostsForUsersParams{
+		UserID: user.ID,
+		Limit:  int32(limit),
+	})
+	if err != nil {
+		return err
+	}
+	for results := range results {
+		fmt.Printf("Post: %s\n", results)
 	}
 
 	return nil

@@ -44,6 +44,7 @@ func main() {
 	cmnds.register("follow", middlewareLoggedIn(handlerFollow))
 	cmnds.register("following", middlewareLoggedIn(handlerFollowing))
 	cmnds.register("unfollow", middlewareLoggedIn(handlerUnfollow))
+	cmnds.register("browse", middlewareLoggedIn(handlerBrowse))
 
 	cliCmd := command{}
 	cliCmd.name = args[0]
