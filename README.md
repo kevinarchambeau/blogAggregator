@@ -9,7 +9,7 @@ This is a CLI RSS aggregator that supports multiple users and feeds.
 
 * Make sure your postgres user is configured
 * Create a db in postgres
-  * `CREATE DATABASE gator;`
+  * `CREATE DATABASE gator;` (this can be a different name as long as the connection string matches)
 * `go install github.com/pressly/goose/v3/cmd/goose@latest`
 * run `goose -dir sql/schema postgres postgres://postgres:$password@localhost:5432/$DB up`
 
