@@ -4,7 +4,9 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"github.com/google/uuid"
 	"github.com/kevinarchambeau/blogAggregator/internal/database"
+	"strings"
 	"time"
 )
 
@@ -15,23 +17,50 @@ func scrapeFeeds(s *state, duration time.Duration) error {
 		return err
 	}
 
-	currentTime := sql.NullTime{
+	currentSqlTime := sql.NullTime{
 		Time:  time.Now(),
 		Valid: true,
 	}
-	err = s.db.MarkFeedFetched(context.Background(), database.MarkFeedFetchedParams{
-		LastFetchedAt: currentTime,
-		ID:            feed.ID,
-	})
+	currentTime := time.Now()
+
 	data, err := fetchFeed(context.Background(), feed.Url)
 	if err != nil {
 		return err
 	}
+
+	err = s.db.MarkFeedFetched(context.Background(), database.MarkFeedFetchedParams{
+		LastFetchedAt: currentSqlTime,
+		ID:            feed.ID,
+	})
+	if err != nil {
+		return err
+	}
+
 	fmt.Printf("Fetched feed: %s\n", feed.Name)
 	for _, item := range data.Channel.Item {
-		fmt.Printf("* %s\n", item.Title)
+		pubDate, err := time.Parse(time.RFC1123Z, item.PubDate)
+		if err != nil {
+			return err
+		}
+		err = s.db.CreatePost(context.Background(), database.CreatePostParams{
+			ID:          uuid.New(),
+			CreatedAt:   currentTime,
+			UpdatedAt:   currentTime,
+			Title:       item.Title,
+			Url:         item.Link,
+			Description: item.Description,
+			PublishedAt: pubDate,
+			FeedID:      feed.ID,
+		})
+		if err != nil {
+			if strings.Contains(err.Error(), "posts_url_key") {
+				fmt.Printf("Post already exists: %s\n", item.Title)
+				// don't update posts for now and just skip if it exists
+				continue
+			}
+			return err
+		}
 	}
-	fmt.Printf("\n")
 
 	return nil
 }

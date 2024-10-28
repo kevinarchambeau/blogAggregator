@@ -11,7 +11,7 @@ import (
 	"github.com/google/uuid"
 )
 
-const getPostsForUsers = `-- name: GetPostsForUsers :many
+const getPostsForUser = `-- name: GetPostsForUser :many
 select id, created_at, updated_at, title, url, description, published_at, feed_id from posts where
     feed_id in (
         select id from feeds where user_id = $1
@@ -20,13 +20,13 @@ select id, created_at, updated_at, title, url, description, published_at, feed_i
     limit $2
 `
 
-type GetPostsForUsersParams struct {
+type GetPostsForUserParams struct {
 	UserID uuid.UUID
 	Limit  int32
 }
 
-func (q *Queries) GetPostsForUsers(ctx context.Context, arg GetPostsForUsersParams) ([]Post, error) {
-	rows, err := q.db.QueryContext(ctx, getPostsForUsers, arg.UserID, arg.Limit)
+func (q *Queries) GetPostsForUser(ctx context.Context, arg GetPostsForUserParams) ([]Post, error) {
+	rows, err := q.db.QueryContext(ctx, getPostsForUser, arg.UserID, arg.Limit)
 	if err != nil {
 		return nil, err
 	}

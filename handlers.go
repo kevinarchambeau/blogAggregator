@@ -213,17 +213,19 @@ func handlerBrowse(s *state, cmd command, user database.User) error {
 			return err
 		}
 	}
-	fmt.Printf("%d\n.", limit)
+	fmt.Printf("%d\n", limit)
 
-	results, err := s.db.GetPostsForUsers(context.Background(), database.GetPostsForUsersParams{
+	results, err := s.db.GetPostsForUser(context.Background(), database.GetPostsForUserParams{
 		UserID: user.ID,
 		Limit:  int32(limit),
 	})
 	if err != nil {
 		return err
 	}
-	for results := range results {
-		fmt.Printf("Post: %s\n", results)
+	for _, result := range results {
+		fmt.Printf("Post: %s\n", result.Title)
+		fmt.Printf("* Description: %s\n", result.Description)
+		fmt.Printf("* URL: %s\n\n", result.Url)
 	}
 
 	return nil

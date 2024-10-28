@@ -1,4 +1,4 @@
--- name: GetPostsForUsers :many
+-- name: GetPostsForUser :many
 select * from posts where
     feed_id in (
         select id from feeds where user_id = $1
