@@ -54,11 +54,15 @@ func scrapeFeeds(s *state, duration time.Duration) error {
 		})
 		if err != nil {
 			if strings.Contains(err.Error(), "posts_url_key") {
-				fmt.Printf("Post already exists: %s\n", item.Title)
-				// don't update posts for now and just skip if it exists
-				continue
+				err = s.db.UpdatePost(context.Background(), database.UpdatePostParams{
+					UpdatedAt:   currentTime,
+					Title:       item.Title,
+					Description: item.Description,
+					Url:         item.Link,
+				})
+			} else {
+				return err
 			}
-			return err
 		}
 	}
 
